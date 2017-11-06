@@ -76,7 +76,6 @@ public class DisplayNotepadFragment extends Fragment {
                     notepadModels.add(notepadModel);
                 } while (c.moveToNext());
             }
-
             c.close();
             return notepadModels;
         }
