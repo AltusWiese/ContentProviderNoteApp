@@ -23,7 +23,7 @@ public class NotepadContentProvider extends ContentProvider {
 
     private static final String PROVIDER_NAME = "com.awiese.contentprovider";
     public static final String URL = "content://" + PROVIDER_NAME;
-    private static final String _ID = "_id";
+    public static final String _ID = "_id";
     public static final String NOTE_TITLE = "note_title_text";
     public static final String NOTE_BODY_TEXT = "note_body_text";
     private static final int NOTES = 1;

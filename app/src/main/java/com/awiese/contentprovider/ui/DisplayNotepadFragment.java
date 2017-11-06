@@ -1,8 +1,6 @@
 package com.awiese.contentprovider.ui;
 
 
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,11 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.awiese.contentprovider.R;
-import com.awiese.contentprovider.contentProvider.NotepadContentProvider;
-import com.awiese.contentprovider.model.NotepadModel;
+import com.awiese.contentprovider.contentProvider.DataQueries;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DisplayNotepadFragment extends Fragment {
 
@@ -54,32 +50,12 @@ public class DisplayNotepadFragment extends Fragment {
 
 
     private void setupClickListeners(View view) {
-        displayNotesButton.setOnClickListener(v -> setViewModelListOfNotes(view));
+        displayNotesButton.setOnClickListener(v -> setAdapterDisplayListOfNotes(view));
     }
 
-    private void setViewModelListOfNotes(View view) {
+    private void setAdapterDisplayListOfNotes(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_list_notes);
-        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(getListOfNotes());
+        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(new DataQueries(getContext()).getListOfNotes());
         recyclerView.setAdapter(noteDisplayAdapter);
-    }
-
-    private List<NotepadModel> getListOfNotes() {
-        List<NotepadModel> notepadModels = new ArrayList<>();
-        Uri notes = Uri.parse(NotepadContentProvider.URL);
-        Cursor c = getContext().getContentResolver().query(notes, null, null, null, "note_title_text");
-        if (c != null) {
-            if (c.moveToFirst()) {
-                do {
-                    String noteTitle = c.getString(c.getColumnIndex(NotepadContentProvider.NOTE_TITLE));
-                    String noteBody = c.getString(c.getColumnIndex(NotepadContentProvider.NOTE_BODY_TEXT));
-                    NotepadModel notepadModel = new NotepadModel(noteTitle, noteBody);
-                    notepadModels.add(notepadModel);
-                } while (c.moveToNext());
-            }
-            c.close();
-            return notepadModels;
-        }
-
-        throw new NullPointerException();
     }
 }
