@@ -13,7 +13,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -22,7 +24,7 @@ import java.util.Objects;
 public class NotepadContentProvider extends ContentProvider {
 
     private static final String PROVIDER_NAME = "com.awiese.contentprovider";
-    public static final String URL = "content://" + PROVIDER_NAME;
+    public static final String URL = "content://" + PROVIDER_NAME + "/notes";
     public static final String _ID = "_id";
     public static final String NOTE_TITLE = "note_title_text";
     public static final String NOTE_BODY_TEXT = "note_body_text";
@@ -31,11 +33,12 @@ public class NotepadContentProvider extends ContentProvider {
     private static final HashMap<String, String> NOTES_PROJECTION_MAP = new HashMap<>();
     public static final Uri CONTENT_URI = Uri.parse(URL);
 
-    private static final UriMatcher uriMatcher;
+     static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, "notes", NOTES);
+
+        uriMatcher.addURI(PROVIDER_NAME, "/notes", NOTES);
+        uriMatcher.addURI(PROVIDER_NAME, "/notes/#", NOTES_ID);
     }
 
 
@@ -122,13 +125,15 @@ public class NotepadContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 
+        int match = uriMatcher.match(uri);
         int count;
-        switch (uriMatcher.match(uri)) {
+        switch (match) {
             case NOTES:
                 count = db.delete(NOTES_TABLE_NAME, selection, selectionArgs);
+                Toast.makeText(getContext(),"Note deleted",Toast.LENGTH_LONG).show();
                 break;
             case NOTES_ID:
-                String id = uri.getPathSegments().get(1);
+                String id = uri.getLastPathSegment();
                 String where = _ID + " = " + id;
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
@@ -139,7 +144,7 @@ public class NotepadContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        if (count > 0 && getContext() != null) {
+        if (count >= 0 && getContext() != null) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return count;
@@ -175,11 +180,12 @@ public class NotepadContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        switch (uriMatcher.match(uri)) {
+        int match = uriMatcher.match(uri);
+        switch (match) {
             case NOTES:
-                return "com.android.cursor.dir/com.awiese.notes";
+                return "vnd.android.cursor.dir/com.awiese.notes";
             case NOTES_ID:
-                return "com.android.cursor.item/com.awiese.notes";
+                return "vnd.android.cursor.item/com.awiese.notes";
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }

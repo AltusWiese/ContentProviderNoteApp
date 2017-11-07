@@ -13,12 +13,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.awiese.contentprovider.R;
+import com.awiese.contentprovider.RecycleViewClickListener;
 import com.awiese.contentprovider.contentProvider.DataQueries;
 
 import java.util.ArrayList;
 
 public class DisplayNotepadFragment extends Fragment {
 
+
+    private RecycleViewClickListener listener;
     private Button displayNotesButton;
 
     @Override
@@ -33,29 +36,35 @@ public class DisplayNotepadFragment extends Fragment {
 
     private void setupRecyclerView(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_list_notes);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
-        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(new ArrayList<>());
+        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(new ArrayList<>(), listener);
         recyclerView.setAdapter(noteDisplayAdapter);
 
         final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+
     }
+
 
     private void setupViews(View view) {
         displayNotesButton = view.findViewById(R.id.display_notes_button);
     }
 
-
     private void setupClickListeners(View view) {
         displayNotesButton.setOnClickListener(v -> setAdapterDisplayListOfNotes(view));
+
+        DataQueries dataQueries = new DataQueries(getContext());
+        listener = (deleteView, noteTitle, noteBody) -> dataQueries.deleteSelectedNote(noteTitle);
     }
 
     private void setAdapterDisplayListOfNotes(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_list_notes);
-        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(new DataQueries(getContext()).getListOfNotes());
+        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(new DataQueries(getContext()).getListOfNotes(), listener);
         recyclerView.setAdapter(noteDisplayAdapter);
     }
+
 }

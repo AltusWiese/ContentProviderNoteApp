@@ -4,4 +4,10 @@
     <string name="type_your_note">Type your note…</string>
     <string name="add_note">Add Note</string>
     <string name="show_notes">Show Notes</string>
+    <string name="change_title">Change title</string>
+    <string name="change_note">Change note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="edit_note_button">Edit</string>
+    <string name="delete_note_button">Delete</string>
+    <string name="dialog_header">Do you want to delete or edit this note?</string>
 </resources>
