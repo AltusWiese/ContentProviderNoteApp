@@ -1,8 +1,9 @@
 package com.awiese.contentprovider.ui;
 
-import android.app.Fragment;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,16 @@ import com.awiese.contentprovider.contentProvider.DataQueries;
 
 public class AddNotepadFragment extends Fragment {
 
-    private EditText notepadTitleEditText, notepadBodyEditText;
+    private EditText notepadAddTitleText, notepadBodyAddText;
     private Button addNewNoteButton;
 
+
+    public static AddNotepadFragment newInstance() {
+        Bundle args = new Bundle();
+        AddNotepadFragment fragment = new AddNotepadFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -27,17 +35,17 @@ public class AddNotepadFragment extends Fragment {
     }
 
     private void setupViews(View view) {
-        notepadTitleEditText = view.findViewById(R.id.title_edit_text);
-        notepadBodyEditText = view.findViewById(R.id.body_edit_text);
+        notepadAddTitleText = view.findViewById(R.id.title_add_text);
+        notepadBodyAddText = view.findViewById(R.id.body_add_text);
         addNewNoteButton = view.findViewById(R.id.button_add_note);
 
     }
 
     private void setupClickListeners() {
         addNewNoteButton.setOnClickListener(v -> {
-            new DataQueries(getContext()).addNote(notepadTitleEditText, notepadBodyEditText);
-        notepadTitleEditText.getText().clear();
-        notepadBodyEditText.getText().clear();
+            new DataQueries(getContext()).addNote(notepadAddTitleText, notepadBodyAddText);
+        notepadAddTitleText.getText().clear();
+        notepadBodyAddText.getText().clear();
         });
     }
 }

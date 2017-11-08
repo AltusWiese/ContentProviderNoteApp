@@ -5,16 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.awiese.contentprovider.DialogEditDeleteFragment;
 import com.awiese.contentprovider.R;
 import com.awiese.contentprovider.RecycleViewClickListener;
 
 public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
-    private DialogEditDeleteFragment dialogEditDeleteFragment = new DialogEditDeleteFragment();
+
     final TextView noteTitleText;
     final TextView noteBodyText;
-    private RecycleViewClickListener mListener;
+    private final  RecycleViewClickListener mListener;
 
     public NoteDisplayViewHolder(View noteView, RecycleViewClickListener listener) {
         super(noteView);
@@ -27,7 +26,6 @@ public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements Vi
 
     @Override
     public boolean onLongClick(View view) {
-//        dialogEditDeleteFragment.show();
         mListener.onClick(view, noteTitleText.getText().toString(), noteBodyText.getText().toString());
         return true;
     }

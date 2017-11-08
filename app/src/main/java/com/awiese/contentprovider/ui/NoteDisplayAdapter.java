@@ -14,7 +14,7 @@ import java.util.List;
 class NoteDisplayAdapter extends RecyclerView.Adapter<NoteDisplayViewHolder> {
 
     private final List<NotepadModel> notepadModelList;
-    private RecycleViewClickListener mListener;
+    private final RecycleViewClickListener mListener;
 
     NoteDisplayAdapter(List<NotepadModel> notepadModelList, RecycleViewClickListener listener) {
         this.notepadModelList = notepadModelList;

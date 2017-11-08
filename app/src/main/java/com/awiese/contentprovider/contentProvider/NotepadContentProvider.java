@@ -13,9 +13,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -25,7 +23,7 @@ public class NotepadContentProvider extends ContentProvider {
 
     private static final String PROVIDER_NAME = "com.awiese.contentprovider";
     public static final String URL = "content://" + PROVIDER_NAME + "/notes";
-    public static final String _ID = "_id";
+    private static final String _ID = "_id";
     public static final String NOTE_TITLE = "note_title_text";
     public static final String NOTE_BODY_TEXT = "note_body_text";
     private static final int NOTES = 1;
@@ -33,7 +31,7 @@ public class NotepadContentProvider extends ContentProvider {
     private static final HashMap<String, String> NOTES_PROJECTION_MAP = new HashMap<>();
     public static final Uri CONTENT_URI = Uri.parse(URL);
 
-     static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
 
@@ -68,6 +66,7 @@ public class NotepadContentProvider extends ContentProvider {
             onCreate(db);
         }
     }
+
     @Override
     public boolean onCreate() {
         Context context = getContext();
@@ -130,7 +129,6 @@ public class NotepadContentProvider extends ContentProvider {
         switch (match) {
             case NOTES:
                 count = db.delete(NOTES_TABLE_NAME, selection, selectionArgs);
-                Toast.makeText(getContext(),"Note deleted",Toast.LENGTH_LONG).show();
                 break;
             case NOTES_ID:
                 String id = uri.getLastPathSegment();

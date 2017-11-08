@@ -15,7 +15,7 @@ import java.util.List;
 
 public class DataQueries {
 
-    private Context mContext;
+    private final Context mContext;
 
     public DataQueries(Context context) {
         this.mContext = context;
@@ -23,6 +23,7 @@ public class DataQueries {
 
     public void addNote(EditText notepadTitleEditText, EditText notepadBodyEditText) {
         ContentValues values = new ContentValues();
+        String response = "New note " + notepadTitleEditText.getText().toString() + " was added.";
         values.put(NotepadContentProvider.NOTE_TITLE,
                 notepadTitleEditText.getText().toString());
         values.put(NotepadContentProvider.NOTE_BODY_TEXT,
@@ -30,7 +31,7 @@ public class DataQueries {
         Uri uri = mContext.getContentResolver().insert(
                 NotepadContentProvider.CONTENT_URI, values);
         if (uri != null) {
-            Toast.makeText(mContext, uri.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, response, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -54,12 +55,11 @@ public class DataQueries {
         throw new NullPointerException();
     }
 
-    public void updateSelectedNote(String noteTitleText, String noteBodyText) {
+    public void updateSelectedNote(String oldNoteTitleText, String noteTitleText, String noteBodyText) {
         ContentValues mUpdateValues = new ContentValues();
         String mSelectionClause = NotepadContentProvider.NOTE_TITLE + " LIKE ?";
-        String[] mSelectionArgs = {noteTitleText};
+        String[] mSelectionArgs = {oldNoteTitleText};
         int mRowsUpdated;
-        String previousTitleText = NotepadContentProvider.NOTE_TITLE;
         mUpdateValues.put(NotepadContentProvider.NOTE_TITLE, noteTitleText);
         mUpdateValues.put(NotepadContentProvider.NOTE_BODY_TEXT, noteBodyText);
         mRowsUpdated = mContext.getContentResolver().update(
@@ -68,7 +68,7 @@ public class DataQueries {
                 mSelectionClause,
                 mSelectionArgs
         );
-        String response = mRowsUpdated + " rows were updated. " + previousTitleText +
+        String response = mRowsUpdated + " rows were updated. " + oldNoteTitleText +
                 " was changed.";
         Toast.makeText(mContext, response, Toast.LENGTH_LONG).show();
     }
@@ -79,5 +79,7 @@ public class DataQueries {
         String[] mSelectionArgs = {noteTitle};
         ContentResolver cr = mContext.getContentResolver();
         cr.delete(NotepadContentProvider.CONTENT_URI, mSelectionClause, mSelectionArgs);
+        String response = noteTitle + " was deleted.";
+        Toast.makeText(mContext, response, Toast.LENGTH_LONG).show();
     }
 }
