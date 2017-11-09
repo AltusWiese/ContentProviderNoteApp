@@ -15,7 +15,7 @@
 
         <provider
             android:authorities="com.awiese.contentprovider"
-            android:name=".contentProvider.NotepadContentProvider"
+            android:name=".provider.NotepadContentProvider"
             android:exported="false" />
 
         <activity android:name=".MainActivity"

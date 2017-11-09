@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.awiese.contentprovider.R;
-import com.awiese.contentprovider.contentProvider.DataQueries;
+import com.awiese.contentprovider.provider.DataQueries;
 
 public class AddNotepadFragment extends Fragment {
 

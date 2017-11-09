@@ -1,4 +1,4 @@
-package com.awiese.contentprovider.contentProvider;
+package com.awiese.contentprovider.provider;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -21,6 +21,7 @@ public class DataQueries {
         this.mContext = context;
     }
 
+
     public void addNote(EditText notepadTitleEditText, EditText notepadBodyEditText) {
         ContentValues values = new ContentValues();
         String response = "New note " + notepadTitleEditText.getText().toString() + " was added.";
@@ -37,7 +38,7 @@ public class DataQueries {
 
     public List<NotepadModel> getListOfNotes() {
         List<NotepadModel> notepadModels = new ArrayList<>();
-        Uri notes = Uri.parse(NotepadContentProvider.URL);
+        Uri notes = NotepadContentProvider.CONTENT_URI;
         Cursor c = mContext.getContentResolver().query(notes, null, null, null, "note_title_text");
         if (c != null) {
             if (c.moveToFirst()) {

@@ -15,10 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.awiese.contentprovider.EditFragment;
 import com.awiese.contentprovider.R;
 import com.awiese.contentprovider.RecycleViewClickListener;
-import com.awiese.contentprovider.contentProvider.DataQueries;
+import com.awiese.contentprovider.provider.DataQueries;
 
 import java.util.ArrayList;
 

@@ -9,7 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        
+
     }
     buildTypes {
         release {
@@ -24,6 +24,7 @@ android {
 }
 
 dependencies {
+
     compile 'com.android.support:recyclerview-v7:26.1.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])

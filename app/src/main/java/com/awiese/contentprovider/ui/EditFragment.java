@@ -1,4 +1,4 @@
-package com.awiese.contentprovider;
+package com.awiese.contentprovider.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.awiese.contentprovider.contentProvider.DataQueries;
-import com.awiese.contentprovider.ui.AddNotepadFragment;
+import com.awiese.contentprovider.R;
+import com.awiese.contentprovider.provider.DataQueries;
 
 
 public class EditFragment extends Fragment {

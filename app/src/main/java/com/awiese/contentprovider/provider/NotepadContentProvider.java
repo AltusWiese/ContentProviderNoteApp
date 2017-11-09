@@ -1,4 +1,4 @@
-package com.awiese.contentprovider.contentProvider;
+package com.awiese.contentprovider.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -8,7 +8,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -18,73 +17,44 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static com.awiese.contentprovider.provider.ContentProviderContract.AUTHORITY;
+import static com.awiese.contentprovider.provider.ContentProviderContract.Columns.NOTE_TITLE;
+import static com.awiese.contentprovider.provider.ContentProviderContract.Columns._ID;
+import static com.awiese.contentprovider.provider.ContentProviderContract.Notes.CONTENT_URI;
+import static com.awiese.contentprovider.provider.DbSchema.NOTES_TABLE_NAME;
+
 
 public class NotepadContentProvider extends ContentProvider {
 
-    private static final String PROVIDER_NAME = "com.awiese.contentprovider";
-    public static final String URL = "content://" + PROVIDER_NAME + "/notes";
-    private static final String _ID = "_id";
-    public static final String NOTE_TITLE = "note_title_text";
-    public static final String NOTE_BODY_TEXT = "note_body_text";
     private static final int NOTES = 1;
     private static final int NOTES_ID = 2;
     private static final HashMap<String, String> NOTES_PROJECTION_MAP = new HashMap<>();
-    public static final Uri CONTENT_URI = Uri.parse(URL);
-
-    private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher URI_MATCHER;
+    private NotesOpenHelper mHelper = null;
 
     static {
-
-        uriMatcher.addURI(PROVIDER_NAME, "/notes", NOTES);
-        uriMatcher.addURI(PROVIDER_NAME, "/notes/#", NOTES_ID);
-    }
-
-
-    private SQLiteDatabase db;
-    private static final String DATABASE_NAME = "NotesStash";
-    private static final String NOTES_TABLE_NAME = "notes";
-    private static final int DATABASE_VERSION = 1;
-    private static final String CREATE_DB_TABLE =
-            " CREATE TABLE " + NOTES_TABLE_NAME +
-                    " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    " note_title_text TEXT NOT NULL, " +
-                    " note_body_text TEXT NOT NULL);";
-
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_DB_TABLE);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + NOTES_TABLE_NAME);
-            onCreate(db);
-        }
+        URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+        URI_MATCHER.addURI(AUTHORITY, "/notes", NOTES);
+        URI_MATCHER.addURI(AUTHORITY, "/notes/#", NOTES_ID);
     }
 
     @Override
     public boolean onCreate() {
-        Context context = getContext();
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
-        return db != null;
+       mHelper = new NotesOpenHelper(getContext());
+       return true;
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         long rowID = db.insert(NOTES_TABLE_NAME, "", values);
         if (rowID > 0) {
-            Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
+            Uri notesUri = ContentUris.withAppendedId(CONTENT_URI, rowID);
             if (getContext() != null) {
-                getContext().getContentResolver().notifyChange(_uri, null);
+                getContext().getContentResolver().notifyChange(notesUri, null);
             }
-            return _uri;
+            return notesUri;
         }
 
         throw new SQLException("Failed to add a record into " + uri);
@@ -93,15 +63,16 @@ public class NotepadContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(NOTES_TABLE_NAME);
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(NOTES_TABLE_NAME);
 
-        switch (uriMatcher.match(uri)) {
+        switch (URI_MATCHER.match(uri)) {
             case NOTES:
-                qb.setProjectionMap(NOTES_PROJECTION_MAP);
+                builder.setProjectionMap(NOTES_PROJECTION_MAP);
                 break;
             case NOTES_ID:
-                qb.appendWhere(_ID + "=" + uri.getPathSegments().get(1));
+                builder.appendWhere(_ID + "=" + uri.getLastPathSegment());
                 break;
 
             default:
@@ -110,7 +81,7 @@ public class NotepadContentProvider extends ContentProvider {
             sortOrder = NOTE_TITLE;
         }
 
-        Cursor c = qb.query(db, projection, selection,
+        Cursor c = builder.query(db, projection, selection,
                 selectionArgs, null, null, sortOrder);
         if (getContext() != null) {
             c.setNotificationUri(getContext().getContentResolver(), uri);
@@ -124,7 +95,8 @@ public class NotepadContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 
-        int match = uriMatcher.match(uri);
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        int match = URI_MATCHER.match(uri);
         int count;
         switch (match) {
             case NOTES:
@@ -150,8 +122,9 @@ public class NotepadContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         int count;
-        switch (uriMatcher.match(uri)) {
+        switch (URI_MATCHER.match(uri)) {
             case NOTES:
                 count = db.update(NOTES_TABLE_NAME, values, selection, selectionArgs);
                 break;
@@ -178,7 +151,7 @@ public class NotepadContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        int match = uriMatcher.match(uri);
+        int match = URI_MATCHER.match(uri);
         switch (match) {
             case NOTES:
                 return "vnd.android.cursor.dir/com.awiese.notes";
