@@ -4,8 +4,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.widget.EditText;
 import android.widget.Toast;
+
+import com.awiese.contentprovider.model.NotepadModel;
 
 public class DataQueries {
 
@@ -16,13 +17,15 @@ public class DataQueries {
     }
 
 
-    public void addNote(EditText notepadTitleEditText, EditText notepadBodyEditText) {
+    public void addNote(NotepadModel notepadModel) {
         ContentValues values = new ContentValues();
-        String response = "New note " + notepadTitleEditText.getText().toString() + " was added.";
+        String title = notepadModel.getNotepadTitleText();
+        String body = notepadModel.getNotepadBodyText();
+        String response = "New note " + title + " was added.";
         values.put(ContentProviderContract.Columns.NOTE_TITLE,
-                notepadTitleEditText.getText().toString());
+                title);
         values.put(ContentProviderContract.Columns.NOTE_BODY_TEXT,
-                notepadBodyEditText.getText().toString());
+                body);
         Uri uri = mContext.getContentResolver().insert(
                 ContentProviderContract.Notes.CONTENT_URI, values);
         if (uri != null) {
@@ -30,31 +33,31 @@ public class DataQueries {
         }
     }
 
-    public void updateSelectedNote(String noteId, String noteTitleText, String noteBodyText) {
+    public void updateSelectedNote(NotepadModel notepadModel) {
         ContentValues mUpdateValues = new ContentValues();
         String mSelectionClause = ContentProviderContract.Columns._ID + " = ?";
-        String[] mSelectionArgs = {noteId};
+        String[] mSelectionArgs = {notepadModel.getNoteId()};
 
-        mUpdateValues.put(ContentProviderContract.Columns.NOTE_TITLE, noteTitleText);
-        mUpdateValues.put(ContentProviderContract.Columns.NOTE_BODY_TEXT, noteBodyText);
+        mUpdateValues.put(ContentProviderContract.Columns.NOTE_TITLE, notepadModel.getNotepadTitleText());
+        mUpdateValues.put(ContentProviderContract.Columns.NOTE_BODY_TEXT, notepadModel.getNotepadBodyText());
         mContext.getContentResolver().update(
                 ContentProviderContract.Notes.CONTENT_URI,
                 mUpdateValues,
                 mSelectionClause,
                 mSelectionArgs
         );
-        String response = "Note " + noteId +
+        String response = "Note " + notepadModel.getNoteId() +
                 " was changed.";
         Toast.makeText(mContext, response, Toast.LENGTH_LONG).show();
     }
 
-    public void deleteSelectedNote(String noteId) {
+    public void deleteSelectedNote(NotepadModel notepadModel) {
 
         String mSelectionClause = ContentProviderContract.Columns._ID + " = ?";
-        String[] mSelectionArgs = {noteId};
+        String[] mSelectionArgs = {notepadModel.getNoteId()};
         ContentResolver cr = mContext.getContentResolver();
         cr.delete(ContentProviderContract.Notes.CONTENT_URI, mSelectionClause, mSelectionArgs);
-        String response = noteId + " was deleted.";
+        String response = notepadModel.getNoteId() + " was deleted.";
         Toast.makeText(mContext, response, Toast.LENGTH_LONG).show();
     }
 }

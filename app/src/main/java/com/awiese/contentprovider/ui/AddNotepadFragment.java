@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.awiese.contentprovider.R;
+import com.awiese.contentprovider.model.NotepadModel;
 import com.awiese.contentprovider.provider.DataQueries;
 
 public class AddNotepadFragment extends Fragment {
@@ -43,9 +44,12 @@ public class AddNotepadFragment extends Fragment {
 
     private void setupClickListeners() {
         addNewNoteButton.setOnClickListener(v -> {
-            new DataQueries(getContext()).addNote(notepadAddTitleText, notepadBodyAddText);
-        notepadAddTitleText.getText().clear();
-        notepadBodyAddText.getText().clear();
+            String addNoteTitle = notepadAddTitleText.getText().toString();
+            String addNoteBody = notepadBodyAddText.getText().toString();
+            NotepadModel notepadModel = new NotepadModel(addNoteTitle, addNoteBody);
+            new DataQueries(getContext()).addNote(notepadModel);
+            notepadAddTitleText.getText().clear();
+            notepadBodyAddText.getText().clear();
         });
     }
 }

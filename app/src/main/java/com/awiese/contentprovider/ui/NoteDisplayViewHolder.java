@@ -14,9 +14,9 @@ public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements Vi
     final TextView noteId;
     final TextView noteTitleText;
     final TextView noteBodyText;
-    private final  RecycleViewClickListener mListener;
+    private final RecycleViewClickListener mListener;
 
-    public NoteDisplayViewHolder(View noteView, RecycleViewClickListener listener) {
+    NoteDisplayViewHolder(View noteView, RecycleViewClickListener listener) {
         super(noteView);
         mListener = listener;
         noteView.setOnLongClickListener(this);
@@ -29,7 +29,6 @@ public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements Vi
     @Override
     public boolean onLongClick(View view) {
         mListener.onClick(view, (NotepadModel) view.getTag());
-//        mListener.onClick(view, Integer.parseInt(noteId.getText().toString()), noteTitleText.getText().toString(), noteBodyText.getText().toString());
         return true;
     }
 }

@@ -39,8 +39,8 @@ public class NotepadContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-       mHelper = new NotesOpenHelper(getContext());
-       return true;
+        mHelper = new NotesOpenHelper(getContext());
+        return true;
     }
 
     @Nullable

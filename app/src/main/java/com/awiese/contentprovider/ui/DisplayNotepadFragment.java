@@ -55,22 +55,19 @@ public class DisplayNotepadFragment extends Fragment implements LoaderManager.Lo
 
     }
 
-    private void editDeleteAlertDialog (NotepadModel notepadModel) {
-        String editNoteId = notepadModel.getNoteId();
-        String editNoteTitle = notepadModel.getNotepadTitleText();
-        String editNoteBody = notepadModel.getNotepadBodyText();
+    private void editDeleteAlertDialog(NotepadModel notepadModel) {
         Bundle editTextBundle = new Bundle();
-        editTextBundle.putString("noteId", editNoteId);
-        editTextBundle.putString("noteTitleText", editNoteTitle);
-        editTextBundle.putString("noteBodyText", editNoteBody);
+        editTextBundle.putParcelable("notepadModel", notepadModel);
+        EditFragment newFragment = new EditFragment();
+        newFragment.setArguments(editTextBundle);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_body)
                 .setTitle(R.string.dialog_header);
-        builder.setPositiveButton(R.string.edit_note_button, (dialog, which) -> initFragments(EditFragment.newInstance(editTextBundle)));
+        builder.setPositiveButton(R.string.edit_note_button, (dialog, which) -> initFragments(newFragment.newInstance(notepadModel)));
 
         builder.setNegativeButton(R.string.delete_note_button, (dialog, which) -> {
             DataQueries dataQueries = new DataQueries(getContext());
-            dataQueries.deleteSelectedNote(editNoteId);
+            dataQueries.deleteSelectedNote(notepadModel);
 
         });
         builder.setNeutralButton(R.string.cancel_note_button, (dialog, which) -> dialog.cancel());
@@ -89,13 +86,13 @@ public class DisplayNotepadFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), CONTENT_URI, null ,null , null, "note_title_text");
+        return new CursorLoader(getActivity(), CONTENT_URI, null, null, null, "note_title_text");
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
-        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(data,  listener);
+        NoteDisplayAdapter noteDisplayAdapter = new NoteDisplayAdapter(data, listener);
         recyclerView.setAdapter(noteDisplayAdapter);
     }
 

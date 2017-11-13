@@ -12,21 +12,19 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.awiese.contentprovider.R;
+import com.awiese.contentprovider.model.NotepadModel;
 import com.awiese.contentprovider.provider.DataQueries;
 
 
 public class EditFragment extends Fragment {
 
-    private static String oldNoteTitleText, oldNoteBodyText, noteId;
-
+    private String noteTitle, noteBody, noteId;
     private EditText notepadTitleEditText, notepadBodyEditText;
     private Button EditNoteButton;
 
-    public static EditFragment newInstance(Bundle editTextBundle) {
-        noteId = editTextBundle.getString("noteId");
-        oldNoteTitleText = editTextBundle.getString("noteTitleText");
-        oldNoteBodyText = editTextBundle.getString("noteBodyText");
+    public EditFragment newInstance(NotepadModel notepadModel) {
         Bundle args = new Bundle();
+        args.putParcelable("notepadModel", notepadModel);
         EditFragment fragment = new EditFragment();
         fragment.setArguments(args);
         return fragment;
@@ -35,17 +33,28 @@ public class EditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
+        GetBundleArguments();
         setupViews(view);
         setupClickListeners();
         return view;
+    }
+
+    private void GetBundleArguments() {
+        Bundle retrievedArguments = getArguments();
+        NotepadModel note = retrievedArguments.getParcelable("notepadModel");
+        if (note != null) {
+            noteId = note.getNoteId();
+            noteTitle = note.getNotepadTitleText();
+            noteBody = note.getNotepadBodyText();
+        }
     }
 
     private void setupViews(View view) {
         notepadTitleEditText = view.findViewById(R.id.title_edit_text);
         notepadBodyEditText = view.findViewById(R.id.body_edit_text);
         EditNoteButton = view.findViewById(R.id.button_edit_note);
-        notepadTitleEditText.setText(oldNoteTitleText);
-        notepadBodyEditText.setText(oldNoteBodyText);
+        notepadTitleEditText.setText(noteTitle);
+        notepadBodyEditText.setText(noteBody);
 
     }
 
@@ -54,7 +63,8 @@ public class EditFragment extends Fragment {
             String updatedTitleText, updatedBodyText;
             updatedTitleText = notepadTitleEditText.getText().toString();
             updatedBodyText = notepadBodyEditText.getText().toString();
-            new DataQueries(getContext()).updateSelectedNote(noteId, updatedTitleText, updatedBodyText);
+            NotepadModel notepadModel = new NotepadModel(noteId, updatedTitleText, updatedBodyText);
+            new DataQueries(getContext()).updateSelectedNote(notepadModel);
             initFragments(AddNotepadFragment.newInstance());
         });
     }
