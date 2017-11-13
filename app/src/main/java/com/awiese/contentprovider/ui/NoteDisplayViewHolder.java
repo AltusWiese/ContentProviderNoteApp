@@ -7,10 +7,11 @@ import android.widget.TextView;
 
 import com.awiese.contentprovider.R;
 import com.awiese.contentprovider.RecycleViewClickListener;
+import com.awiese.contentprovider.model.NotepadModel;
 
 public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
-
+    final TextView noteId;
     final TextView noteTitleText;
     final TextView noteBodyText;
     private final  RecycleViewClickListener mListener;
@@ -19,6 +20,7 @@ public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements Vi
         super(noteView);
         mListener = listener;
         noteView.setOnLongClickListener(this);
+        noteId = noteView.findViewById(R.id.note_ref_id);
         noteTitleText = noteView.findViewById(R.id.title_display_note);
         noteBodyText = noteView.findViewById(R.id.body_display_note);
 
@@ -26,7 +28,8 @@ public class NoteDisplayViewHolder extends RecyclerView.ViewHolder implements Vi
 
     @Override
     public boolean onLongClick(View view) {
-        mListener.onClick(view, noteTitleText.getText().toString(), noteBodyText.getText().toString());
+        mListener.onClick(view, (NotepadModel) view.getTag());
+//        mListener.onClick(view, Integer.parseInt(noteId.getText().toString()), noteTitleText.getText().toString(), noteBodyText.getText().toString());
         return true;
     }
 }

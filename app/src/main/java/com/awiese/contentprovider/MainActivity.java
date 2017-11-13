@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.display_fragments_activity);
+        setContentView(R.layout.fragments_display_activity);
         initFragments(AddNotepadFragment.newInstance());
     }
 

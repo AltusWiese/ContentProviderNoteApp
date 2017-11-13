@@ -1,7 +1,7 @@
 package com.awiese.contentprovider.provider;
 
 
-public interface DbSchema {
+interface DbSchema {
 
     String DATABASE_NAME = "NotesStash";
     String NOTES_TABLE_NAME = "notes";

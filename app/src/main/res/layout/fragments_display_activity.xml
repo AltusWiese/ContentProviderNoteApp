@@ -11,17 +11,6 @@
     app:layout_constraintTop_toTopOf="parent"
     tools:context="com.awiese.contentprovider.MainActivity">
 
-    <!--<fragment-->
-    <!--android:id="@+id/add_notepad_fragment"-->
-    <!--android:name="com.awiese.contentprovider.ui.AddNotepadFragment"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--app:layout_constraintBottom_toTopOf="@id/display_notepad_fragment"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent"-->
-    <!--tools:layout="@layout/add_new_note_fragment_view" />-->
-
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -40,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideline"
-        tools:layout="@layout/display_notepad_fragment_view" />
+        tools:layout="@layout/fragment_display_notepad" />
 
     <FrameLayout
         android:id="@+id/frame_container"

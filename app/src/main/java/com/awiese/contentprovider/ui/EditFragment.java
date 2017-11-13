@@ -17,13 +17,15 @@ import com.awiese.contentprovider.provider.DataQueries;
 
 public class EditFragment extends Fragment {
 
-    private static String oldNoteTitleText, oldNoteBodyText;
+    private static String oldNoteTitleText, oldNoteBodyText, noteId;
+
     private EditText notepadTitleEditText, notepadBodyEditText;
     private Button EditNoteButton;
 
-    public static EditFragment newInstance(String noteTitleText, String noteBodyText) {
-        oldNoteTitleText = noteTitleText;
-        oldNoteBodyText = noteBodyText;
+    public static EditFragment newInstance(Bundle editTextBundle) {
+        noteId = editTextBundle.getString("noteId");
+        oldNoteTitleText = editTextBundle.getString("noteTitleText");
+        oldNoteBodyText = editTextBundle.getString("noteBodyText");
         Bundle args = new Bundle();
         EditFragment fragment = new EditFragment();
         fragment.setArguments(args);
@@ -32,7 +34,7 @@ public class EditFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.edit_note_fragment_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
         setupViews(view);
         setupClickListeners();
         return view;
@@ -52,7 +54,7 @@ public class EditFragment extends Fragment {
             String updatedTitleText, updatedBodyText;
             updatedTitleText = notepadTitleEditText.getText().toString();
             updatedBodyText = notepadBodyEditText.getText().toString();
-            new DataQueries(getContext()).updateSelectedNote(oldNoteTitleText, updatedTitleText, updatedBodyText);
+            new DataQueries(getContext()).updateSelectedNote(noteId, updatedTitleText, updatedBodyText);
             initFragments(AddNotepadFragment.newInstance());
         });
     }

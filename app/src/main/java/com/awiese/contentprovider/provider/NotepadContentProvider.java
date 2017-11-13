@@ -3,7 +3,6 @@ package com.awiese.contentprovider.provider;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -130,7 +129,7 @@ public class NotepadContentProvider extends ContentProvider {
                 break;
 
             case NOTES_ID:
-                String id = uri.getPathSegments().get(1);
+                String id = uri.getLastPathSegment();
                 String where = _ID + " = " + id;
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
